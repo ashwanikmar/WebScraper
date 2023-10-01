@@ -121,59 +121,44 @@ selectClickButtonStart = (e) => {
 };
 
 selectClickButtonStop = (e) => {
+  // e.target.click(function(event){event.stopPropagation()});;
+  e.stopPropagation();
+  e.preventDefault();
   let target = e.target;
   document.removeEventListener("mousemove", selectClickButtonStart, true);
-  document.removeEventListener("click", selectClickButtonStop);
+  document.removeEventListener("click", selectClickButtonStop, true);
   isListeningButtonSelectMousemove = false;
-  console.log(target);
   clickButtonElements.push(target);
+  document.getElementById("action_count").innerText =
+    clickButtonElements.length;
 };
 
 runActions = () => {
-  alert("yuu");
-for (let index = 0; index < clickButtonElements.length; index++) {
-  let forLoopToTargetElementPath = findDepthOfTargetElement(
-    clickButtonElements[index],
-    forLoopElements
-  );
+  for (let index = 0; index < clickButtonElements.length; index++) {
+    let forLoopToTargetElementPath = findDepthOfTargetElement(
+      clickButtonElements[index],
+      forLoopElements
+    );
 
-  for (let index = 0; index < forLoopElements.length; index++) {
-    let el = forLoopElements[index];
-    let isElementFound = true;
+    for (let index = 0; index < forLoopElements.length; index++) {
+      let el = forLoopElements[index];
+      let isElementFound = true;
 
-    for (let index = 0; index < forLoopToTargetElementPath.length; index++) {
-      if (el.children[forLoopToTargetElementPath[index]] == undefined) {
-        isElementFound = false;
-        break;
+      for (let index = 0; index < forLoopToTargetElementPath.length; index++) {
+        if (el.children[forLoopToTargetElementPath[index]] == undefined) {
+          isElementFound = false;
+          break;
+        }
+        el = el.children[forLoopToTargetElementPath[index]];
       }
-      el = el.children[forLoopToTargetElementPath[index]];
-    }
 
-    if (isElementFound) {
-      el.click();
+      if (isElementFound) {
+        el.click();
+      }
     }
   }
 
-}
-
-  // for (let index = 0; index < forLoopElements.length; index++) {
-  //   let el = forLoopElements[index];
-  //   let isElementFound = true;
-
-  //   for (let index = 0; index < forLoopToTargetElementPath.length; index++) {
-  //     if (el.children[forLoopToTargetElementPath[index]] == undefined) {
-  //       isElementFound = false;
-  //       break;
-  //     }
-  //     el = el.children[forLoopToTargetElementPath[index]];
-  //   }
-
-  //   if (isElementFound) {
-  //     el.style.outline = "dashed";
-  //     el.style.outlineColor = "black";
-  //     highlightedElements.push(el);
-  //   }
-  // }
+  clickButtonElements = [];
 };
 /**
  * Calculating similarity score multiple factor like class, child count and name.
@@ -257,8 +242,8 @@ initExtension = () => {
   let containerEle = document.createElement("div");
   containerEle.style.position = "fixed";
   containerEle.style.bottom = "0px";
-  containerEle.style.left = "calc(50vh / 2)";
-  containerEle.style.width = "100vh";
+  containerEle.style.left = "calc(50vw / 2)";
+  containerEle.style.width = "50vw";
   containerEle.style.height = "100px";
   containerEle.style.zIndex = "100";
   containerEle.style.backgroundColor = "#1f1e24";
@@ -280,6 +265,8 @@ initExtension = () => {
   loopButtonEle.style.display = "flex";
   loopButtonEle.style.justifyContent = "center";
   loopButtonEle.style.alignItems = "center";
+  loopButtonEle.style.cursor = "pointer";
+
   loopButtonEle.onclick = (e) => {
     e.stopPropagation();
 
@@ -301,24 +288,16 @@ initExtension = () => {
   clickButtonAction.style.border = "1px dashed white";
   clickButtonAction.style.borderRadius = "5px";
   clickButtonAction.style.textAlign = "center";
+  clickButtonAction.style.cursor = "pointer";
+
   clickButtonAction.onclick = (e) => {
     e.stopPropagation();
     if (!isListeningButtonSelectMousemove) {
-      document.addEventListener("click", selectClickButtonStop);
+      document.addEventListener("click", selectClickButtonStop, true);
       document.addEventListener("mousemove", selectClickButtonStart, true);
       isListeningButtonSelectMousemove = true;
     }
   };
-
-  let inputButtonAction = document.createElement("div");
-  inputButtonAction.innerText = "select Input Button";
-  inputButtonAction.style.color = "white";
-  inputButtonAction.style.backgroundColor = "#434248";
-  inputButtonAction.style.height = "50%";
-  inputButtonAction.style.width = "25%";
-  inputButtonAction.style.border = "1px dashed white";
-  inputButtonAction.style.borderRadius = "5px";
-  inputButtonAction.style.textAlign = "center";
 
   let runButtonAction = document.createElement("div");
   runButtonAction.innerText = "Run";
@@ -329,18 +308,21 @@ initExtension = () => {
   runButtonAction.style.border = "1px dashed white";
   runButtonAction.style.borderRadius = "5px";
   runButtonAction.style.textAlign = "center";
-  runButtonAction.id = "run_actions";
-  runButtonAction.onclick = runActions;
+  runButtonAction.style.cursor = "pointer";
+  runButtonAction.onclick = () => {
+    actionContainer.style.display = "none";
+    loopButtonEle.style.display = "flex";
+    runActions();
+  };
 
   let actionContainer = document.createElement("div");
-  actionContainer.innerHTML = `<div> Add Action </>`;
+  actionContainer.innerHTML = `<div> Add Action: <span id="action_count">0</span> </div>`;
   actionContainer.style.display = "none";
   actionContainer.style.width = "100%";
   actionContainer.style.justifyContent = "space-around";
   actionContainer.style.color = "white";
 
   actionContainer.appendChild(clickButtonAction);
-  actionContainer.appendChild(inputButtonAction);
   actionContainer.appendChild(runButtonAction);
 
   containerEle.appendChild(loopButtonEle);
