@@ -77,6 +77,8 @@ forLoopInspectionStop = (e) => {
 };
 
 selectClickButtonStart = (e) => {
+  e.stopPropagation();
+  e.preventDefault();
   let target = e.target;
 
   /**
@@ -159,6 +161,8 @@ runActions = () => {
   }
 
   clickButtonElements = [];
+  document.getElementById("action_count").innerText =
+    clickButtonElements.length;
 };
 /**
  * Calculating similarity score multiple factor like class, child count and name.
