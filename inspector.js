@@ -5,7 +5,7 @@ var isListeningForLoopMousemove = false;
 var isListeningButtonSelectMousemove = false;
 
 var clickButtonElements = [];
-// var isListeningForLoopMousemove;
+
 forLoopInspectionStart = (e) => {
   let target = e.target;
 
@@ -81,16 +81,6 @@ selectClickButtonStart = (e) => {
   e.preventDefault();
   let target = e.target;
 
-  /**
-   * Step 1. We are selecting previous element and then next element.
-   * and matching with the target.
-   */
-  let el = target;
-
-  /**
-   * When user goes inside the loop, then I am highlighting similar element
-   * by finding its path and setting its outline on all forLoop element
-   */
   let forLoopToTargetElementPath = findDepthOfTargetElement(
     target,
     forLoopElements
@@ -123,7 +113,6 @@ selectClickButtonStart = (e) => {
 };
 
 selectClickButtonStop = (e) => {
-  // e.target.click(function(event){event.stopPropagation()});;
   e.stopPropagation();
   e.preventDefault();
   let target = e.target;
@@ -161,9 +150,13 @@ runActions = () => {
   }
 
   clickButtonElements = [];
+  forLoopElements = [];
+  highlightedElements = [];
+  highlightedButtonElements = [];
   document.getElementById("action_count").innerText =
     clickButtonElements.length;
 };
+
 /**
  * Calculating similarity score multiple factor like class, child count and name.
  * we can enhance this logic to get more accurate results. currently it will fail
